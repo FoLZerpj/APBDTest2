@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using APBDTest2.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace APBDTest2.Controllers;
 
@@ -30,10 +31,13 @@ public class PublishingHousesController : ControllerBase
             }
 
             query = query.OrderBy(h => h.Country).ThenBy(h => h.Name);
-            return Ok(query.ToList());
+
+            var query1 = query.Select(d => new PublishingHouseData(d.IdPublishingHouse, d.Name, d.Country, d.City, _context.Books.Where(b => b.PublishingHouse == d).ToList()));
+            
+            return Ok(query1.ToList());
         }
         catch (Exception e) { return BadRequest(e); }
     }
 }
 
-
+public record PublishingHouseData(int IdPublishingHouse, string Name, string Country, string City, List<Book> Books);
